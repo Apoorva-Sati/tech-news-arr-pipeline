@@ -90,7 +90,10 @@ def clean_date(raw_date):
     if text == "" or text.lower() in ("n/a", "na", "null", "none", "not disclosed"):
         return None
 
-    # Try formats in order: ISO, US, EU
+    # Strip ISO time/zone suffix, e.g. "2021-09-11T00:00:00Z" -> "2021-09-11"
+    if "T" in text and text.count("-") == 2:
+        text = text.split("T")[0]
+
     formats_to_try = [
         "%Y-%m-%d",      # ISO: 2023-05-12
         "%Y/%m/%d",      # ISO variant
@@ -100,6 +103,8 @@ def clean_date(raw_date):
         "%d-%m-%Y",      # EU variant
         "%B %d, %Y",     # e.g. May 12, 2023
         "%d %B %Y",      # e.g. 12 May 2023
+        "%d %b %Y",      # e.g. 21 Feb 2020  <-- NEW: abbreviated month
+        "%b %d, %Y",     # e.g. Feb 21, 2020 <-- NEW: abbreviated month, US order
     ]
 
     parsed = None

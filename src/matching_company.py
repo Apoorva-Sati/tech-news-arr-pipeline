@@ -1,4 +1,3 @@
-import json
 import re
 import difflib
 from pathlib import Path
@@ -14,22 +13,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
-
-
-# -----------------------------
-# Load files
-# -----------------------------
-
-def load_articles():
-    path = DATA_DIR / "tech_news.csv"
-    return pd.read_csv(path)
-
-
-def load_metadata():
-    path = DATA_DIR / "company_metadata.json"
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
 
 # -----------------------------
 # Normalization helpers

@@ -8,7 +8,8 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
-from matching_company import load_articles, load_metadata, process_matching
+from load_data import load_file
+from matching_company import process_matching
 from enrichment import enrich_articles
 from modeling import write_tables
 from export import export_ai_articles
@@ -16,8 +17,8 @@ from export import export_ai_articles
 
 def run_pipeline():
     print("== 1. Load ==")
-    articles = load_articles()
-    metadata = load_metadata()
+    articles = load_file("tech_news.csv")
+    metadata = load_file("company_metadata.json")
     print(f"Loaded {len(articles)} articles, {len(metadata)} companies")
 
     print("\n== 2. Match companies ==")

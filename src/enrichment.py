@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 import pandas as pd
 
@@ -6,8 +5,6 @@ from cleaning import clean_revenue, clean_date, standardize_category
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-OUTPUT_DIR = BASE_DIR / "output"
 
 
 # -----------------------------

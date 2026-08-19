@@ -1,6 +1,4 @@
 import re
-import json
-import pandas as pd
 from datetime import datetime
 
 def clean_revenue(raw_value):

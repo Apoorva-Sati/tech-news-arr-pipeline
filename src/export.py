@@ -1,7 +1,5 @@
 """Export ai_articles_enriched.csv per assignment spec."""
-import pandas as pd
 from pathlib import Path
-from datetime import datetime
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = BASE_DIR / "output"
@@ -30,9 +28,6 @@ def export_ai_articles(enriched):
     # 'embedding' placeholder column (filled by bonus semantic-search step if implemented)
     if "embedding" not in result.columns:
         result["embedding"] = None
-
-    out_cols = [c for c in REQUIRED_COLS if c in result.columns] + \
-               (["embedding"] if "embedding" not in REQUIRED_COLS else [])
 
     result = result[REQUIRED_COLS + ["embedding"]]
     OUTPUT_DIR.mkdir(exist_ok=True)

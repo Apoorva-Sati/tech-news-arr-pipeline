@@ -1,5 +1,4 @@
 """Build warehouse-style tables: dim_company, fact_arr_observation, bridge to source articles."""
-import pandas as pd
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent

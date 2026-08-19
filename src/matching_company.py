@@ -153,30 +153,3 @@ def process_matching(articles, metadata):
     unmatched.to_csv(OUTPUT_DIR / "articles_unmatched.csv", index=False)
 
     return matched, unmatched
-
-
-# -----------------------------
-# Main
-# -----------------------------
-
-if __name__ == "__main__":
-    articles = load_articles()
-    metadata = load_metadata()
-
-    matched_articles, unmatched_articles = process_matching(articles, metadata)
-
-    print("Company matching completed.\n")
-    print(f"Total articles : {len(articles)}")
-    print(f"Matched        : {len(matched_articles)}")
-    print(f"  - exact      : {(matched_articles['match_type'] == 'exact').sum()}")
-    print(f"  - alias      : {(matched_articles['match_type'] == 'alias').sum()}")
-    print(f"  - fuzzy      : {(matched_articles['match_type'] == 'fuzzy').sum()}")
-    print(f"  - compound   : {matched_articles['match_type'].astype(str).str.startswith('compound').sum()}")
-    print(f"Unmatched      : {len(unmatched_articles)}")
-
-    print("\nUnmatched company names (genuinely not in metadata):")
-    print(unmatched_articles["company_name"].unique())
-
-    print("\nCreated:")
-    print("- output/articles_matched.csv")
-    print("- output/articles_unmatched.csv")

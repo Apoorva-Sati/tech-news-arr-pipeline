@@ -13,10 +13,7 @@ REQUIRED_COLS = [
 
 
 def export_ai_articles(enriched):
-    """
-    Filter: category or industry indicates AI/ML, published 2022-2024,
-    arr_usd > $50M.
-    """
+    from embeddings import load_embeddings
     df = enriched.copy()
 
     ai_mask = df["is_ai_related"] == True  # noqa: E712
@@ -25,11 +22,19 @@ def export_ai_articles(enriched):
 
     result = df[ai_mask & date_mask & arr_mask].copy()
 
-    # 'embedding' placeholder column (filled by bonus semantic-search step if implemented)
-    if "embedding" not in result.columns:
+    # real embeddings, keyed by article_id
+    article_ids, embeddings = load_embeddings()
+    if embeddings is not None:
+        id_to_vec = dict(zip(article_ids, embeddings.tolist()))
+        result["embedding"] = result["article_id"].map(id_to_vec)
+    else:
         result["embedding"] = None
 
-    result = result[REQUIRED_COLS + ["embedding"]]
+    cols = REQUIRED_COLS + ["embedding"]
+    if "top_similar_articles" in df.columns:
+        cols.append("top_similar_articles")
+
+    result = result[cols]
     OUTPUT_DIR.mkdir(exist_ok=True)
     result.to_csv(OUTPUT_DIR / "ai_articles_enriched.csv", index=False)
     print(f"ai_articles_enriched.csv: {len(result)} rows")

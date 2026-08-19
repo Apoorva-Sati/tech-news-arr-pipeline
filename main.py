@@ -13,6 +13,9 @@ from matching_company import process_matching
 from enrichment import enrich_articles
 from modeling import write_tables
 from export import export_ai_articles
+from build_duckdb import build_duckdb
+from embeddings import generate_embeddings
+from semantic_search import compute_top_similar_per_article
 
 
 def run_pipeline():
@@ -34,6 +37,17 @@ def run_pipeline():
 
     print("\n== 5. Export AI article dataset ==")
     export_ai_articles(enriched)
+
+    print("\n== 6. Build DuckDB warehouse ==")
+    build_duckdb()
+
+    print("\n== 7. Generate embeddings + semantic search index ==")
+    generate_embeddings(enriched)
+    top_similar = compute_top_similar_per_article(top_n=3)
+
+    # attach top_similar_articles to enriched output for inspection
+    enriched["top_similar_articles"] = enriched["article_id"].map(top_similar)
+    enriched.to_csv("output/articles_enriched.csv", index=False)
 
     print("\nPipeline complete. See /output for all CSVs.")
 

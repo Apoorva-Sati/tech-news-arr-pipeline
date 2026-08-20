@@ -2,7 +2,7 @@
 from pathlib import Path
 import duckdb
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 OUTPUT_DIR = BASE_DIR / "output"
 
 TABLES = [

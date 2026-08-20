@@ -4,7 +4,7 @@ import pandas as pd
 from cleaning.cleaning import clean_revenue, clean_date, standardize_category
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # -----------------------------

@@ -2,7 +2,8 @@ import pandas as pd
 import json
 from pathlib import Path
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DATA_DIR = BASE_DIR / "data"        
 
 def load_file(filename):
     path = DATA_DIR / filename

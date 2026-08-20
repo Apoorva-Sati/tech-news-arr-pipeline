@@ -1,7 +1,7 @@
 """Export ai_articles_enriched.csv per assignment spec."""
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 OUTPUT_DIR = BASE_DIR / "output"
 
 REQUIRED_COLS = [

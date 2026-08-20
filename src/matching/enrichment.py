@@ -1,11 +1,10 @@
-import json
 from pathlib import Path
 import pandas as pd
 
+from cleaning.cleaning import clean_revenue, clean_date, standardize_category
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-OUTPUT_DIR = BASE_DIR / "output"
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # -----------------------------
@@ -82,52 +81,45 @@ def is_ai_related(standardized_category, industry):
 
 
 # -----------------------------
-# Apply enrichment to matched articles
+# Apply cleaning + enrichment to matched articles
 # -----------------------------
 
 def enrich_articles(matched_articles, metadata):
     df = matched_articles.copy()
 
-    # Pull metadata fields
+    # -----------------------------
+    # Cleaning step
+    # -----------------------------
+    df["arr_usd"] = df["revenue"].apply(clean_revenue)
+
+    date_parts = df["published_date"].apply(clean_date)
+    df["published_date_clean"] = date_parts.apply(lambda d: d["date"] if d else None)
+    df["year"] = date_parts.apply(lambda d: d["year"] if d else None)
+    df["quarter"] = date_parts.apply(lambda d: d["quarter"] if d else None)
+    df["month"] = date_parts.apply(lambda d: d["month"] if d else None)
+
+    df["category_standardized"] = df["category"].apply(standardize_category)
+
+    # -----------------------------
+    # Metadata enrichment
+    # -----------------------------
     enriched = df["company_id"].apply(lambda cid: enrich_with_metadata(cid, metadata))
     enriched_df = pd.DataFrame(list(enriched))
     df = pd.concat([df.reset_index(drop=True), enriched_df.reset_index(drop=True)], axis=1)
 
-    # Company age (requires clean_date already applied -> 'year' column, else use published_date year)
-    if "year" in df.columns:
-        published_year_col = df["year"]
-    else:
-        published_year_col = pd.to_datetime(df["published_date"], errors="coerce").dt.year
-
+    # Company age (uses cleaned 'year' from date parsing above)
     df["company_age"] = [
         calculate_company_age(fy, py)
-        for fy, py in zip(df["founded_year"], published_year_col)
+        for fy, py in zip(df["founded_year"], df["year"])
     ]
 
     # Size category
     df["company_size_category"] = df["employee_count"].apply(get_size_category)
 
-    # AI flag (requires standardized category column, e.g. 'category_standardized')
-    category_col = df["category_standardized"] if "category_standardized" in df.columns else df.get("category")
+    # AI flag (uses cleaned 'category_standardized' column)
     df["is_ai_related"] = [
         is_ai_related(cat, ind)
-        for cat, ind in zip(category_col, df["industry"])
+        for cat, ind in zip(df["category_standardized"], df["industry"])
     ]
 
     return df
-
-
-if __name__ == "__main__":
-    matched = pd.read_csv(OUTPUT_DIR / "articles_matched.csv")
-
-    with open(DATA_DIR / "company_metadata.json", "r", encoding="utf-8") as f:
-        metadata = json.load(f)
-
-    enriched = enrich_articles(matched, metadata)
-    enriched.to_csv(OUTPUT_DIR / "articles_enriched.csv", index=False)
-
-    print(f"Enriched {len(enriched)} articles.")
-    print("\nSample rows:")
-    print(enriched[["company_id", "industry", "founded_year", "employee_count",
-                     "company_age", "company_size_category", "is_ai_related"]].head(5))
-    print("\nSaved: output/articles_enriched.csv")

@@ -1,4 +1,3 @@
-import json
 import re
 import difflib
 from pathlib import Path
@@ -10,26 +9,10 @@ import pandas as pd
 # Paths
 # -----------------------------
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
-
-
-# -----------------------------
-# Load files
-# -----------------------------
-
-def load_articles():
-    path = DATA_DIR / "tech_news.csv"
-    return pd.read_csv(path)
-
-
-def load_metadata():
-    path = DATA_DIR / "company_metadata.json"
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
 
 # -----------------------------
 # Normalization helpers
@@ -153,30 +136,3 @@ def process_matching(articles, metadata):
     unmatched.to_csv(OUTPUT_DIR / "articles_unmatched.csv", index=False)
 
     return matched, unmatched
-
-
-# -----------------------------
-# Main
-# -----------------------------
-
-if __name__ == "__main__":
-    articles = load_articles()
-    metadata = load_metadata()
-
-    matched_articles, unmatched_articles = process_matching(articles, metadata)
-
-    print("Company matching completed.\n")
-    print(f"Total articles : {len(articles)}")
-    print(f"Matched        : {len(matched_articles)}")
-    print(f"  - exact      : {(matched_articles['match_type'] == 'exact').sum()}")
-    print(f"  - alias      : {(matched_articles['match_type'] == 'alias').sum()}")
-    print(f"  - fuzzy      : {(matched_articles['match_type'] == 'fuzzy').sum()}")
-    print(f"  - compound   : {matched_articles['match_type'].astype(str).str.startswith('compound').sum()}")
-    print(f"Unmatched      : {len(unmatched_articles)}")
-
-    print("\nUnmatched company names (genuinely not in metadata):")
-    print(unmatched_articles["company_name"].unique())
-
-    print("\nCreated:")
-    print("- output/articles_matched.csv")
-    print("- output/articles_unmatched.csv")

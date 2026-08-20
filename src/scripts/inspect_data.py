@@ -1,4 +1,4 @@
-from load_data import load_file
+from ingestion.load_data import load_file
 
 def inspect_articles():
     df = load_file("tech_news.csv")

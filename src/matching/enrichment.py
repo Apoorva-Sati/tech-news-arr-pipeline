@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 
-from cleaning import clean_revenue, clean_date, standardize_category
+from cleaning.cleaning import clean_revenue, clean_date, standardize_category
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent / "src"))
 
-from load_data import load_file
+from ingestion.load_data import load_file
 
 def test_load_csv():
     df = load_file("tech_news.csv")

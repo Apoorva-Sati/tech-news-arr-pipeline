@@ -1,6 +1,6 @@
 """Cosine similarity search over article embeddings."""
 import numpy as np
-from embeddings import get_model, load_embeddings
+from search.embeddings import get_model, load_embeddings
 
 
 def cosine_similarity(query_vec, matrix):

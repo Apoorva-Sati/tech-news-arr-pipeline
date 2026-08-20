@@ -13,7 +13,7 @@ REQUIRED_COLS = [
 
 
 def export_ai_articles(enriched):
-    from embeddings import load_embeddings
+    from search.embeddings import load_embeddings
     df = enriched.copy()
 
     ai_mask = df["is_ai_related"] == True  # noqa: E712

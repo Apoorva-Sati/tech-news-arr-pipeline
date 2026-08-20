@@ -8,14 +8,14 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
-from load_data import load_file
-from matching_company import process_matching
-from enrichment import enrich_articles
-from modeling import write_tables
-from export import export_ai_articles
-from build_duckdb import build_duckdb
-from embeddings import generate_embeddings
-from semantic_search import compute_top_similar_per_article
+from ingestion.load_data import load_file
+from matching.matching_company import process_matching
+from matching.enrichment import enrich_articles
+from modeling.modeling import write_tables
+from export.export import export_ai_articles
+from export.build_duckdb import build_duckdb
+from search.embeddings import generate_embeddings
+from search.semantic_search import compute_top_similar_per_article
 
 
 def run_pipeline():

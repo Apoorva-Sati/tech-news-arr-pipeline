@@ -2,7 +2,7 @@
 from pathlib import Path
 import duckdb
 import numpy as np
-from embeddings import get_model, load_embeddings
+from search.embeddings import get_model, load_embeddings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "output" / "warehouse.duckdb"
